@@ -1,0 +1,11 @@
+.app-header {
+  text-align: center;
+}
+
+.app-header > h1 {
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  font-size: 48px;
+  margin-top: 66px;
+}
