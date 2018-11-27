@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - "10.10.0"
+
+cache: yarn
+
+install:
+  - yarn install
+
+script:
+  - yarn test
+
+after_success:
+  - yarn report-coverage
