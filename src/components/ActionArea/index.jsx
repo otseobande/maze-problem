@@ -10,6 +10,10 @@ class ActionArea extends React.Component {
     gameBoard: []
   }
 
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
   /**
    * Handles dimension input change and sets value to state
    *
@@ -70,9 +74,66 @@ class ActionArea extends React.Component {
     this.setState({ gameBoard });
   }
 
+  moveMarioVertically = (direction) => {
+    const board = [ ...this.state.gameBoard ];
+    const marioRowIndex = board.findIndex(row => row.some(value => value === 'mario'));
+    const nextRowIndex = direction === 'up' ? marioRowIndex - 1 : marioRowIndex + 1;
+
+    if(board[marioRowIndex] && board[nextRowIndex]) {
+      const marioColumnIndex = board[marioRowIndex].findIndex(value => value === 'mario');
+
+      board[marioRowIndex][marioColumnIndex] = 'empty';
+      board[nextRowIndex][marioColumnIndex] = 'mario';
+
+      this.setState(() => ({ gameBoard: board }));
+    }
+  }
+
+  moveMarioHorizontally = (direction) => {
+    const board = [ ...this.state.gameBoard ];
+    const marioRowIndex = board.findIndex(row => row.some(value => value === 'mario'));
+    const marioColumnIndex = board[marioRowIndex].findIndex(value => value === 'mario');
+    const nextColumnIndex = direction === 'left' ? marioColumnIndex - 1 : marioColumnIndex + 1;
+
+    if(board[marioRowIndex] && board[marioRowIndex][nextColumnIndex]) {
+      board[marioRowIndex][marioColumnIndex] = 'empty';
+      board[marioRowIndex][nextColumnIndex] = 'mario';
+
+      this.setState(() => ({ gameBoard: board }));
+    }
+  }
+
+  /**
+   * Handles key press on page
+   *
+   * @returns {void}
+   */
+  handleKeyDown = (event) => {
+    const { key } = event;
+
+    if (this.state.gameStarted) {
+      switch (key) {
+        case 'ArrowUp':
+          return this.moveMarioVertically('up');
+        case 'ArrowDown':
+          return this.moveMarioVertically('down');
+        case 'ArrowLeft':
+          return this.moveMarioHorizontally('left');
+        case 'ArrowRight':
+          return this.moveMarioHorizontally('right');
+        default:
+          return;
+      }
+    }
+  }
+
+
+
   render () {
     return (
-      <main>
+      <main
+        onKeyPress={this.handleKeyPress}
+      >
         {
           this.state.gameStarted
             ? <GameArea

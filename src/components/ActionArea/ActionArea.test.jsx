@@ -94,4 +94,144 @@ describe('The ActionArea Component', () => {
       expect(wrapper.state().width).toEqual(0);
     });
   });
+
+  describe('Mario move methods', () => {
+    let gameBoard;
+
+    beforeEach(() => {
+      gameBoard = [
+        ['empty', 'empty', 'empty'],
+        ['empty', 'empty', 'empty'],
+        ['empty', 'empty', 'empty'],
+      ];
+    });
+
+    describe('The moveMarioVertically method', () => {
+      it('should move mario up if called with up', () => {
+        gameBoard[2][1] = 'mario';
+
+        wrapper.setState({ gameBoard });
+
+        wrapper.instance().moveMarioVertically('up');
+
+        expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
+        expect(wrapper.state().gameBoard[1][1]).toEqual('mario');
+      });
+
+      it('should move mario down if called with down', () => {
+        gameBoard[0][1] = 'mario';
+
+        wrapper.setState({ gameBoard });
+
+        wrapper.instance().moveMarioVertically('down');
+
+        expect(wrapper.state().gameBoard[0][1]).toEqual('empty');
+        expect(wrapper.state().gameBoard[1][1]).toEqual('mario');
+      });
+    });
+
+    describe('The moveMarioHorizontally method', () => {
+      it('should move mario left if called with left', () => {
+        gameBoard[2][1] = 'mario';
+
+        wrapper.setState({ gameBoard });
+
+        wrapper.instance().moveMarioHorizontally('left');
+
+        expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
+        expect(wrapper.state().gameBoard[2][0]).toEqual('mario');
+      });
+
+      it('should move mario right if called with right', () => {
+        gameBoard[2][1] = 'mario';
+
+        wrapper.setState({ gameBoard });
+
+        wrapper.instance().moveMarioHorizontally('right');
+
+        expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
+        expect(wrapper.state().gameBoard[2][2]).toEqual('mario');
+      });
+    });
+  });
+
+  describe('The handleKeyDown method', () => {
+    beforeEach(() => {
+      wrapper.setState({
+        gameStarted: true,
+        gameBoard: [
+          ['empty', 'empty', 'empty'],
+          ['empty', 'mario', 'empty'],
+          ['empty', 'empty', 'empty'],
+        ]
+      });
+    });
+
+    it('should call moveMarioVertically with "up" on "ArrowUp" event', () => {
+      const instance = wrapper.instance();
+      const ArrowUpEvent = {
+        key: 'ArrowUp'
+      };
+
+      const moveMarioVertically = jest.spyOn(instance, 'moveMarioVertically')
+
+      instance.handleKeyDown(ArrowUpEvent);
+
+      expect(moveMarioVertically).toBeCalledWith('up');
+    })
+
+    it('should call moveMarioVertically with "down" on "ArrowDown" event', () => {
+      const instance = wrapper.instance();
+      const ArrowDownEvent = {
+        key: 'ArrowDown'
+      };
+
+      const moveMarioVertically = jest.spyOn(instance, 'moveMarioVertically')
+
+      instance.handleKeyDown(ArrowDownEvent);
+
+      expect(moveMarioVertically).toBeCalledWith('down');
+    })
+
+    it('should call moveMarioHorizontally with "left" on "ArrowLeft" event', () => {
+      const instance = wrapper.instance();
+      const ArrowLeftEvent = {
+        key: 'ArrowLeft'
+      };
+
+      const moveMarioHorizontally = jest.spyOn(instance, 'moveMarioHorizontally');
+
+      instance.handleKeyDown(ArrowLeftEvent);
+
+      expect(moveMarioHorizontally).toBeCalledWith('left');
+    });
+
+    it('should call moveMarioHorizontally with "right" on "ArrowRight" event', () => {
+      const instance = wrapper.instance();
+      const ArrowRightEvent = {
+        key: 'ArrowRight'
+      };
+
+      const moveMarioHorizontally = jest.spyOn(instance, 'moveMarioHorizontally');
+
+      instance.handleKeyDown(ArrowRightEvent);
+
+      expect(moveMarioHorizontally).toBeCalledWith('right');
+    });
+
+    it('should not call move method of other keys other than arrows', () => {
+      const instance = wrapper.instance();
+      const event = {
+        key: 'Q'
+      }
+
+      const moveMarioHorizontally = jest.spyOn(instance, 'moveMarioHorizontally');
+      const moveMarioVertically = jest.spyOn(instance, 'moveMarioVertically')
+
+      instance.handleKeyDown(event);
+
+      expect(moveMarioHorizontally).not.toBeCalled();
+      expect(moveMarioVertically).not.toBeCalled();
+    });
+  })
 });
