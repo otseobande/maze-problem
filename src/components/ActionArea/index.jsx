@@ -39,12 +39,35 @@ class ActionArea extends React.Component {
    * @returns {void}
    */
   updateGameBoard = () => {
-    this.setState(prevState => ({
-      gameBoard: Array.from(
-        { length: prevState.height },
-        () => Array.from({ length: prevState.width }, () => 'empty'),
-      ),
-    }));
+    const { height, width } = this.state;
+
+    const gameBoard = Array.from(
+      { length: height },
+      () => Array.from({ length: width }, () => 'empty'),
+    );
+
+    const getRandomInt = (min, max) => {
+      const ceilMin = Math.ceil(min);
+      const floorMax = Math.floor(max);
+
+      return Math.floor(Math.random() * (floorMax - ceilMin + 1)) + ceilMin;
+    }
+
+    // randomly distributing the mushrooms
+    for (let i = 1; i <= height; i++) {
+      const randomRowIndex = getRandomInt(0, height - 1);
+      const randomColumnIndex = getRandomInt(0, width - 1);
+
+      gameBoard[randomRowIndex][randomColumnIndex] = 'mushroom';
+    }
+
+    const middleHeight = Math.floor(height / 2);
+    const middleWidth = Math.floor(width / 2);
+
+    // placing the mario character
+    gameBoard[middleHeight][middleWidth] = 'mario';
+
+    this.setState({ gameBoard });
   }
 
   render () {

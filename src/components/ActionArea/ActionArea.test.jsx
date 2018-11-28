@@ -43,15 +43,33 @@ describe('The ActionArea Component', () => {
   });
 
   describe('The updateGameBoard method', () => {
-    it('should update gameBoard state based on given height and width', () => {
+    beforeEach(() => {
       wrapper.setState({ height: 10, width: 20 });
 
       wrapper.instance().updateGameBoard();
+    });
 
+    it('should update gameBoard state based on given height and width', () => {
       expect(wrapper.state().gameBoard).toHaveLength(10);
       wrapper.state().gameBoard.forEach((row) => {
         expect(row).toHaveLength(20);
       });
+    });
+
+    it('should place mario in the game board', () => {
+      const marioExists = wrapper.state().gameBoard.some(row => {
+        return row.some(value => value === 'mario');
+      });
+
+      expect(marioExists).toBeTruthy();
+    });
+
+    it('should place mushroom in the game board', () => {
+      const mushroomExists = wrapper.state().gameBoard.some(row => {
+        return row.some(value => value === 'mushroom');
+      });
+
+      expect(mushroomExists).toBeTruthy();
     });
   });
 

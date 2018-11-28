@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import mushroom from '../../../assets/images/green-mushroom.png';
+import mario from '../../../assets/images/mario.png';
 import './Cell.css';
 
 class Cell extends React.PureComponent {
@@ -8,8 +10,12 @@ class Cell extends React.PureComponent {
   }
 
   render () {
+    const { value } = this.props;
     return (
-      <span className="cell" />
+      <span className="cell">
+        { value === 'mushroom' && <img src={mushroom} alt="mushroom" width="25" /> }
+        { value === 'mario' && <img src={mario} alt="mario" width="25" /> }
+      </span>
     );
   }
 }
