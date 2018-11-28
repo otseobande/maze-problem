@@ -4,7 +4,7 @@ import GameArea from '.';
 import { gameBoard } from './fixtures';
 
 describe('The GameArea component', () => {
-  const wrapper = shallow(<GameArea gameBoard={gameBoard} />);
+  const wrapper = shallow(<GameArea gameBoard={gameBoard} moveCount={6} />);
 
   it('should display game instruction', () => {
     expect(wrapper.find('.instruction').text()).toEqual(

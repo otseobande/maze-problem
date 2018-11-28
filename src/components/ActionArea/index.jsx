@@ -7,7 +7,8 @@ class ActionArea extends React.Component {
     height: 10,
     width: 10,
     gameStarted: false,
-    gameBoard: []
+    gameBoard: [],
+    moveCount: 0,
   }
 
   componentDidMount() {
@@ -85,7 +86,10 @@ class ActionArea extends React.Component {
       board[marioRowIndex][marioColumnIndex] = 'empty';
       board[nextRowIndex][marioColumnIndex] = 'mario';
 
-      this.setState(() => ({ gameBoard: board }));
+      this.setState((prevState) => ({
+        gameBoard: board,
+        moveCount: prevState.moveCount + 1
+      }));
     }
   }
 
@@ -99,7 +103,10 @@ class ActionArea extends React.Component {
       board[marioRowIndex][marioColumnIndex] = 'empty';
       board[marioRowIndex][nextColumnIndex] = 'mario';
 
-      this.setState(() => ({ gameBoard: board }));
+      this.setState((prevState) => ({
+        gameBoard: board,
+        moveCount: prevState.moveCount + 1
+      }));
     }
   }
 
@@ -138,6 +145,7 @@ class ActionArea extends React.Component {
           this.state.gameStarted
             ? <GameArea
                 gameBoard={this.state.gameBoard}
+                moveCount={this.state.moveCount}
               />
             : <DimensionDialog
                 handleInputChange={this.handleDimensionChange}

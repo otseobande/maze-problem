@@ -1,0 +1,7 @@
+.move-count {
+  display: inline-block;
+  border: 1px solid #000000;
+  padding: 9px;
+  margin: auto;
+  margin-bottom: 25px;
+}
