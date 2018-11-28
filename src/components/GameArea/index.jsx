@@ -1,33 +1,21 @@
 import React from 'react';
-import DimensionDialog from '../DimensionDialog';
+import PropTypes from 'prop-types';
+import Grid from '../Grid';
+import './GameArea.css';
 
-class GameArea extends React.Component {
-  state = {
-    height: 10,
-    width: 10
-  }
-
-  /**
-   * Handles dimension input change and sets value to state
-   *
-   * @param {Event} event
-   *
-   * @returns {void}
-   */
-  handleDimensionChange = (event) => {
-    this.setState({ [event.target.name]: parseInt(event.target.value, 10) || 0 })
+class GameArea extends React.PureComponent {
+  static propTypes = {
+    gameBoard: PropTypes.arrayOf(PropTypes.array).isRequired,
   }
 
   render () {
     return (
-      <main>
-        <DimensionDialog
-          handleInputChange={this.handleDimensionChange}
-          height={this.state.height}
-          width={this.state.width}
-          startGame={() => null}
-        />
-      </main>
+      <div className="game-area">
+        <p className="instruction">
+          Goal: Collect all mushrooms with the least moves possible.
+        </p>
+        <Grid gameBoard={this.props.gameBoard}/>
+      </div>
     );
   }
 }
