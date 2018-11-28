@@ -44,7 +44,7 @@ class DimensionDialog extends React.Component {
               />
             </div>
           </div>
-          <button type="submit" className="start-game-btn" autoFocus>
+          <button type="submit" className="btn primary-btn start-game-btn" autoFocus>
             Start Game
           </button>
         </form>

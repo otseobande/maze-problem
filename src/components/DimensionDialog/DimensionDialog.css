@@ -37,7 +37,6 @@
   height: 51px;
   border: 1px solid #000000;
   margin-top: 8px;
-  border-radius: 5px;
   font-size: 30px;
   font-family: inherit;
   padding: 0 10px;
@@ -47,24 +46,6 @@
 }
 
 .start-game-btn {
-  width: 234px;
-  height: 61px;
-  background: #000000;
-  border-radius: 5px;
-  color: white;
-  font-family: inherit;
-  font-style: normal;
-  font-weight: normal;
-  line-height: normal;
-  font-size: 18px;
   margin: auto;
   margin-top: 119px;
-  cursor: pointer;
-  outline-color: #808080;
-}
-
-.start-game-btn:hover {
-  border: 1px solid #000000;
-  background: #FFFFFF;
-  color: #000000;
 }

@@ -32,21 +32,21 @@ describe('The ActionArea Component', () => {
       expect(wrapper.state().gameStarted).toBeTruthy();
     });
 
-    it('should call updateGameBoard method when called', () => {
+    it('should call setupGameBoard method when called', () => {
       const instance = wrapper.instance();
-      const updateGameBoard = jest.spyOn(instance, 'updateGameBoard');
+      const setupGameBoard = jest.spyOn(instance, 'setupGameBoard');
 
       instance.startGame();
 
-      expect(updateGameBoard).toBeCalled();
+      expect(setupGameBoard).toBeCalled();
     });
   });
 
-  describe('The updateGameBoard method', () => {
+  describe('The setupGameBoard method', () => {
     beforeEach(() => {
       wrapper.setState({ height: 10, width: 20 });
 
-      wrapper.instance().updateGameBoard();
+      wrapper.instance().setupGameBoard();
     });
 
     it('should update gameBoard state based on given height and width', () => {
@@ -247,5 +247,42 @@ describe('The ActionArea Component', () => {
       expect(moveMarioHorizontally).not.toBeCalled();
       expect(moveMarioVertically).not.toBeCalled();
     });
-  })
+  });
+
+  describe('The resetBoard method', () => {
+    it('should call setupGameBoard method when called', () => {
+      const instance = wrapper.instance();
+      const setupGameBoard = jest.spyOn(instance, 'setupGameBoard');
+
+      instance.resetBoard()
+
+      expect(setupGameBoard).toBeCalled();
+    });
+
+    it('should set areAllMushroomsCollected state to false when called', () => {
+      wrapper.setState({ areAllMushroomsCollected: true });
+      wrapper.instance().resetBoard()
+
+      expect(wrapper.state().areAllMushroomsCollected).toBeFalsy();
+    })
+  });
+
+  describe('The resetGame method', () => {
+    it('should reset game to default state', () => {
+      wrapper.setState({
+        gameStarted: true,
+        areAllMushroomsCollected: true,
+        gameBoard: [[]],
+        moveCount: 21,
+      });
+      wrapper.instance().resetGame();
+
+      expect(wrapper.state()).toMatchObject({
+        gameStarted: false,
+        areAllMushroomsCollected: false,
+        gameBoard: [],
+        moveCount: 0,
+      })
+    });
+  });
 });
