@@ -3,3 +3,52 @@ main {
   justify-content: center;
   align-items: center;
 }
+
+.btn {
+  width: 234px;
+  height: 61px;
+  color: white;
+  font-family: inherit;
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  font-size: 18px;
+  cursor: pointer;
+  outline-color: #808080;
+  border: 0;
+}
+
+.primary-btn {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+.primary-btn:hover {
+  border: 1px solid #000000;
+  background: #FFFFFF;
+  color: #000000;
+}
+
+.secondary-btn {
+  border: 1px solid #000000;
+  background: #FFFFFF;
+  color: #000000;
+}
+
+.secondary-btn:hover {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+.game-btn {
+  height: auto;
+  font-size: 14px;
+  width: 185px;
+  margin: 0px 18px;
+  padding: 8px;
+}
+
+.game-over-btn {
+  width: 233px;
+  margin: 0px 20px;
+}

@@ -7,6 +7,7 @@ class ActionArea extends React.Component {
     height: 10,
     width: 10,
     gameStarted: false,
+    areAllMushroomsCollected: false,
     gameBoard: [],
     moveCount: 0,
   }
@@ -35,7 +36,7 @@ class ActionArea extends React.Component {
    */
   startGame = () => {
     this.setState({ gameStarted: true });
-    this.updateGameBoard();
+    this.setupGameBoard();
   }
 
   /**
@@ -43,7 +44,7 @@ class ActionArea extends React.Component {
    *
    * @returns {void}
    */
-  updateGameBoard = () => {
+  setupGameBoard = () => {
     const { height, width } = this.state;
 
     const gameBoard = Array.from(
@@ -72,13 +73,39 @@ class ActionArea extends React.Component {
     // placing the mario character
     gameBoard[middleHeight][middleWidth] = 'mario';
 
-    this.setState({ gameBoard });
+    this.setState({ gameBoard, moveCount: 0 });
   }
 
+  /**
+   * Updates gameBoard state
+   *
+   * @param {string} board
+   *
+   * @returns {void}
+   */
+  updateGameBoardState = (board) => {
+    this.setState((prevState) => ({
+      gameBoard: board,
+      moveCount: prevState.moveCount + 1,
+      areAllMushroomsCollected: !prevState.gameBoard.some(row => {
+        return row.some(value => value === 'mushroom');
+      })
+    }));
+  }
+
+  /**
+   * Handles moving the mario player icon vertically
+   *
+   * @param {string} direction
+   *
+   * @returns {void}
+   */
   moveMarioVertically = (direction) => {
     const board = [ ...this.state.gameBoard ];
     const marioRowIndex = board.findIndex(row => row.some(value => value === 'mario'));
-    const nextRowIndex = direction === 'up' ? marioRowIndex - 1 : marioRowIndex + 1;
+    const nextRowIndex = direction === 'up'
+      ? marioRowIndex - 1
+      : marioRowIndex + 1;
 
     if(board[marioRowIndex] && board[nextRowIndex]) {
       const marioColumnIndex = board[marioRowIndex].findIndex(value => value === 'mario');
@@ -86,27 +113,30 @@ class ActionArea extends React.Component {
       board[marioRowIndex][marioColumnIndex] = 'empty';
       board[nextRowIndex][marioColumnIndex] = 'mario';
 
-      this.setState((prevState) => ({
-        gameBoard: board,
-        moveCount: prevState.moveCount + 1
-      }));
+      this.updateGameBoardState(board);
     }
   }
 
+  /**
+   * Handles moving the mario player icon horizontally
+   *
+   * @param {string} direction
+   *
+   * @returns {void}
+   */
   moveMarioHorizontally = (direction) => {
     const board = [ ...this.state.gameBoard ];
     const marioRowIndex = board.findIndex(row => row.some(value => value === 'mario'));
     const marioColumnIndex = board[marioRowIndex].findIndex(value => value === 'mario');
-    const nextColumnIndex = direction === 'left' ? marioColumnIndex - 1 : marioColumnIndex + 1;
+    const nextColumnIndex = direction === 'left'
+      ? marioColumnIndex - 1
+      : marioColumnIndex + 1;
 
     if(board[marioRowIndex] && board[marioRowIndex][nextColumnIndex]) {
       board[marioRowIndex][marioColumnIndex] = 'empty';
       board[marioRowIndex][nextColumnIndex] = 'mario';
 
-      this.setState((prevState) => ({
-        gameBoard: board,
-        moveCount: prevState.moveCount + 1
-      }));
+      this.updateGameBoardState(board);
     }
   }
 
@@ -134,7 +164,21 @@ class ActionArea extends React.Component {
     }
   }
 
+  resetBoard = () => {
+    this.setupGameBoard();
+    this.setState({
+      areAllMushroomsCollected: false
+    });
+  }
 
+  resetGame = () => {
+    this.setState({
+      gameStarted: false,
+      areAllMushroomsCollected: false,
+      gameBoard: [],
+      moveCount: 0,
+    })
+  }
 
   render () {
     return (
@@ -146,6 +190,9 @@ class ActionArea extends React.Component {
             ? <GameArea
                 gameBoard={this.state.gameBoard}
                 moveCount={this.state.moveCount}
+                areAllMushroomsCollected={this.state.areAllMushroomsCollected}
+                resetBoard={this.resetBoard}
+                resetGame={this.resetGame}
               />
             : <DimensionDialog
                 handleInputChange={this.handleDimensionChange}
