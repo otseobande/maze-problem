@@ -131,27 +131,41 @@ describe('The ActionArea Component', () => {
     });
 
     describe('The moveMarioHorizontally method', () => {
-      it('should move mario left if called with left', () => {
-        gameBoard[2][1] = 'mario';
+      describe('When called with "left"', () => {
+        beforeEach(() => {
+          gameBoard[2][1] = 'mario';
 
-        wrapper.setState({ gameBoard });
+          wrapper.setState({ gameBoard });
+          wrapper.instance().moveMarioHorizontally('left');
+        });
 
-        wrapper.instance().moveMarioHorizontally('left');
+        it('should move mario left', () => {
+          expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
+          expect(wrapper.state().gameBoard[2][0]).toEqual('mario');
+        });
 
-        expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
-        expect(wrapper.state().gameBoard[2][0]).toEqual('mario');
-      });
+        it('should update moveCount', () => {
+          expect(wrapper.state().moveCount).toEqual(1);
+        });
+      })
 
-      it('should move mario right if called with right', () => {
-        gameBoard[2][1] = 'mario';
+      describe('When called with "right"', () => {
+        beforeEach(() => {
+          gameBoard[2][1] = 'mario';
 
-        wrapper.setState({ gameBoard });
+          wrapper.setState({ gameBoard });
+          wrapper.instance().moveMarioHorizontally('right');
+        });
 
-        wrapper.instance().moveMarioHorizontally('right');
+        it('should move mario right', () => {
+          expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
+          expect(wrapper.state().gameBoard[2][2]).toEqual('mario');
+        });
 
-        expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
-        expect(wrapper.state().gameBoard[2][2]).toEqual('mario');
-      });
+        it('should update moveCount', () => {
+          expect(wrapper.state().moveCount).toEqual(1);
+        });
+      })
     });
   });
 
