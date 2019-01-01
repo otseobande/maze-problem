@@ -4,9 +4,18 @@ import ActionArea from '.';
 
 describe('The ActionArea Component', () => {
   let wrapper;
+  let instance;
 
   beforeEach(() => {
     wrapper = shallow(<ActionArea />);
+    instance = wrapper.instance();
+    const HtmlAudioMock = {
+      play: jest.fn(),
+      pause: jest.fn()
+    }
+    instance.moveSound = { ...HtmlAudioMock };
+    instance.collectMushroomSound = { ...HtmlAudioMock }
+    instance.stageClearSound = { ...HtmlAudioMock }
   });
 
   it('should render DimensionDialog if gameStarted is false', () => {
@@ -110,24 +119,51 @@ describe('The ActionArea Component', () => {
       it('should move mario up if called with up', () => {
         gameBoard[2][1] = 'mario';
 
-        wrapper.setState({ gameBoard });
+        instance.setState({ gameBoard });
 
-        wrapper.instance().moveMarioVertically('up');
+        instance.moveMarioVertically('up');
 
-        expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
-        expect(wrapper.state().gameBoard[1][1]).toEqual('mario');
+        expect(instance.state.gameBoard[2][1]).toEqual('empty');
+        expect(instance.state.gameBoard[1][1]).toEqual('mario');
       });
 
       it('should move mario down if called with down', () => {
         gameBoard[0][1] = 'mario';
 
-        wrapper.setState({ gameBoard });
+        instance.setState({ gameBoard });
 
-        wrapper.instance().moveMarioVertically('down');
+        instance.moveMarioVertically('down');
 
-        expect(wrapper.state().gameBoard[0][1]).toEqual('empty');
-        expect(wrapper.state().gameBoard[1][1]).toEqual('mario');
+        expect(instance.state.gameBoard[0][1]).toEqual('empty');
+        expect(instance.state.gameBoard[1][1]).toEqual('mario');
       });
+
+      it('should play moveSound if mario is moved into an empty cell', () => {
+        const instance = wrapper.instance();
+        gameBoard[2][1] = 'mario';
+        instance.setState({ gameBoard });
+        instance.moveSound = {
+          play: jest.fn()
+        }
+
+        instance.moveMarioVertically('up');
+
+        expect(instance.moveSound.play).toBeCalled();
+      })
+
+      it('should play collectMushroomSound if mario is moved into an empty cell', () => {
+        const instance = wrapper.instance();
+        gameBoard[1][1] = 'mario';
+        gameBoard[2][1] = 'mushroom';
+        instance.setState({ gameBoard });
+        instance.collectMushroomSound = {
+          play: jest.fn()
+        }
+
+        instance.moveMarioVertically();
+
+        expect(instance.collectMushroomSound.play).toBeCalled();
+      })
     });
 
     describe('The moveMarioHorizontally method', () => {
@@ -135,17 +171,17 @@ describe('The ActionArea Component', () => {
         beforeEach(() => {
           gameBoard[2][1] = 'mario';
 
-          wrapper.setState({ gameBoard });
-          wrapper.instance().moveMarioHorizontally('left');
+          instance.setState({ gameBoard });
+          instance.moveMarioHorizontally('left');
         });
 
         it('should move mario left', () => {
-          expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
-          expect(wrapper.state().gameBoard[2][0]).toEqual('mario');
+          expect(instance.state.gameBoard[2][1]).toEqual('empty');
+          expect(instance.state.gameBoard[2][0]).toEqual('mario');
         });
 
         it('should update moveCount', () => {
-          expect(wrapper.state().moveCount).toEqual(1);
+          expect(instance.state.moveCount).toEqual(1);
         });
       })
 
@@ -153,20 +189,49 @@ describe('The ActionArea Component', () => {
         beforeEach(() => {
           gameBoard[2][1] = 'mario';
 
-          wrapper.setState({ gameBoard });
-          wrapper.instance().moveMarioHorizontally('right');
+          instance.setState({ gameBoard });
+          instance.moveMarioHorizontally('right');
         });
 
         it('should move mario right', () => {
-          expect(wrapper.state().gameBoard[2][1]).toEqual('empty');
-          expect(wrapper.state().gameBoard[2][2]).toEqual('mario');
+          expect(instance.state.gameBoard[2][1]).toEqual('empty');
+          expect(instance.state.gameBoard[2][2]).toEqual('mario');
         });
 
         it('should update moveCount', () => {
-          expect(wrapper.state().moveCount).toEqual(1);
+          expect(instance.state.moveCount).toEqual(1);
         });
+      });
+
+      it('should play moveSound if mario is moved into an empty cell', () => {
+        const instance = wrapper.instance();
+        gameBoard[2][1] = 'mario';
+        instance.setState({ gameBoard });
+        instance.moveSound = {
+          play: jest.fn()
+        }
+
+        instance.moveMarioHorizontally('right');
+
+        expect(instance.moveSound.play).toBeCalled();
+      })
+
+      it('should play collectMushroomSound if mario is moved into an empty cell', () => {
+        const instance = wrapper.instance();
+        gameBoard[1][1] = 'mario';
+        gameBoard[1][0] = 'mushroom';
+        instance.setState({ gameBoard });
+        instance.collectMushroomSound = {
+          play: jest.fn()
+        }
+
+        instance.moveMarioHorizontally('left');
+
+        expect(instance.collectMushroomSound.play).toBeCalled();
       })
     });
+
+
   });
 
   describe('The handleKeyDown method', () => {
@@ -195,7 +260,6 @@ describe('The ActionArea Component', () => {
     })
 
     it('should call moveMarioVertically with "down" on "ArrowDown" event', () => {
-      const instance = wrapper.instance();
       const ArrowDownEvent = {
         key: 'ArrowDown'
       };
@@ -208,7 +272,6 @@ describe('The ActionArea Component', () => {
     })
 
     it('should call moveMarioHorizontally with "left" on "ArrowLeft" event', () => {
-      const instance = wrapper.instance();
       const ArrowLeftEvent = {
         key: 'ArrowLeft'
       };
@@ -221,7 +284,6 @@ describe('The ActionArea Component', () => {
     });
 
     it('should call moveMarioHorizontally with "right" on "ArrowRight" event', () => {
-      const instance = wrapper.instance();
       const ArrowRightEvent = {
         key: 'ArrowRight'
       };
@@ -234,7 +296,6 @@ describe('The ActionArea Component', () => {
     });
 
     it('should not call move method of other keys other than arrows', () => {
-      const instance = wrapper.instance();
       const event = {
         key: 'Q'
       }
@@ -251,7 +312,6 @@ describe('The ActionArea Component', () => {
 
   describe('The resetBoard method', () => {
     it('should call setupGameBoard method when called', () => {
-      const instance = wrapper.instance();
       const setupGameBoard = jest.spyOn(instance, 'setupGameBoard');
 
       instance.resetBoard()
@@ -260,24 +320,24 @@ describe('The ActionArea Component', () => {
     });
 
     it('should set areAllMushroomsCollected state to false when called', () => {
-      wrapper.setState({ areAllMushroomsCollected: true });
-      wrapper.instance().resetBoard()
+      instance.setState({ areAllMushroomsCollected: true });
+      instance.resetBoard()
 
-      expect(wrapper.state().areAllMushroomsCollected).toBeFalsy();
+      expect(instance.state.areAllMushroomsCollected).toBeFalsy();
     })
   });
 
   describe('The resetGame method', () => {
     it('should reset game to default state', () => {
-      wrapper.setState({
+      instance.setState({
         gameStarted: true,
         areAllMushroomsCollected: true,
         gameBoard: [[]],
         moveCount: 21,
       });
-      wrapper.instance().resetGame();
+      instance.resetGame();
 
-      expect(wrapper.state()).toMatchObject({
+      expect(instance.state).toMatchObject({
         gameStarted: false,
         areAllMushroomsCollected: false,
         gameBoard: [],
@@ -285,4 +345,31 @@ describe('The ActionArea Component', () => {
       })
     });
   });
+
+  describe('The updateGameBoardState method', () => {
+    let gameBoard =  [
+      ['empty', 'empty', 'empty'],
+      ['empty', 'empty', 'empty'],
+      ['empty', 'empty', 'empty'],
+    ];
+
+    it('should update gameBoard state', () => {
+      instance.setState({ moveCount: 0 });
+      instance.updateGameBoardState(gameBoard);
+      expect(wrapper.state()).toMatchObject({
+        gameBoard,
+        moveCount: 1,
+        areAllMushroomsCollected: true
+      });
+    });
+
+    it('should play stage clear sound if all mushrooms are collected', () => {
+      gameBoard[0][0] = 'mushroom';
+
+      instance.setState(gameBoard);
+      instance.updateGameBoardState(gameBoard);
+
+      expect(instance.stageClearSound.play).toBeCalled();
+    });
+  })
 });
