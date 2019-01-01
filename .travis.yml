@@ -9,6 +9,15 @@ install:
 
 script:
   - yarn test
+  - yarn build
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $github_token
+  local_dir: build
+  on:
+    branch: develop
 
 after_success:
   - yarn report-coverage
