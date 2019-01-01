@@ -1,6 +1,9 @@
 import React from 'react';
 import DimensionDialog from '../DimensionDialog';
 import GameArea from '../GameArea';
+import moveSound from '../../assets/sounds/move.wav';
+import collectMushroom from '../../assets/sounds/collectMushroom.wav';
+import stageClear from '../../assets/sounds/stageClear.wav';
 
 class ActionArea extends React.Component {
   state = {
@@ -11,6 +14,10 @@ class ActionArea extends React.Component {
     gameBoard: [],
     moveCount: 0,
   }
+
+  moveSound = new Audio(moveSound);
+  collectMushroomSound = new Audio(collectMushroom);
+  stageClearSound = new Audio(stageClear);
 
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown);
@@ -84,12 +91,18 @@ class ActionArea extends React.Component {
    * @returns {void}
    */
   updateGameBoardState = (board) => {
+    const areAllMushroomsCollected = !this.state.gameBoard.some(row => {
+      return row.some(value => value === 'mushroom');
+    });
+
+    if (areAllMushroomsCollected) {
+      this.stageClearSound.play();
+    }
+
     this.setState((prevState) => ({
       gameBoard: board,
       moveCount: prevState.moveCount + 1,
-      areAllMushroomsCollected: !prevState.gameBoard.some(row => {
-        return row.some(value => value === 'mushroom');
-      })
+      areAllMushroomsCollected
     }));
   }
 
@@ -109,6 +122,12 @@ class ActionArea extends React.Component {
 
     if(board[marioRowIndex] && board[nextRowIndex]) {
       const marioColumnIndex = board[marioRowIndex].findIndex(value => value === 'mario');
+
+      if (board[nextRowIndex][marioColumnIndex] === 'mushroom') {
+        this.collectMushroomSound.play();
+      } else {
+        this.moveSound.play();
+      }
 
       board[marioRowIndex][marioColumnIndex] = 'empty';
       board[nextRowIndex][marioColumnIndex] = 'mario';
@@ -133,6 +152,12 @@ class ActionArea extends React.Component {
       : marioColumnIndex + 1;
 
     if(board[marioRowIndex] && board[marioRowIndex][nextColumnIndex]) {
+      if (board[marioRowIndex][nextColumnIndex] === 'mushroom') {
+        this.collectMushroomSound.play();
+      } else {
+        this.moveSound.play();
+      }
+
       board[marioRowIndex][marioColumnIndex] = 'empty';
       board[marioRowIndex][nextColumnIndex] = 'mario';
 
@@ -166,12 +191,20 @@ class ActionArea extends React.Component {
 
   resetBoard = () => {
     this.setupGameBoard();
+    this.stageClearSound.play()
+    this.stageClearSound.pause();
+    this.stageClearSound.currentTime = 0;
+
     this.setState({
       areAllMushroomsCollected: false
     });
   }
 
   resetGame = () => {
+    this.stageClearSound.play();
+    this.stageClearSound.pause();
+    this.stageClearSound.currentTime = 0;
+
     this.setState({
       gameStarted: false,
       areAllMushroomsCollected: false,
