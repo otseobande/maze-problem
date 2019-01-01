@@ -1,6 +1,7 @@
 {
   "name": "maze-problem",
   "version": "0.1.0",
+  "homepage": "https://otseobande.github.io/maze-problem/",
   "private": true,
   "dependencies": {
     "@babel/core": "7.1.0",
@@ -58,6 +59,8 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --coverage",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -b develop -d build",
     "report-coverage": "codecov"
   },
   "eslintConfig": {
@@ -120,6 +123,7 @@
   "devDependencies": {
     "codecov": "^3.1.0",
     "enzyme": "^3.7.0",
-    "enzyme-adapter-react-16": "^1.7.0"
+    "enzyme-adapter-react-16": "^1.7.0",
+    "gh-pages": "^2.0.1"
   }
 }
