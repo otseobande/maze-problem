@@ -8,6 +8,7 @@ describe('The GameArea component', () => {
     <GameArea
       gameBoard={gameBoard}
       moveCount={6}
+      maxMoves={10}
       areAllMushroomsCollected={false}
     />
   );
@@ -20,5 +21,10 @@ describe('The GameArea component', () => {
 
   it('should render Grid component', () => {
     expect(wrapper.find('Grid')).toHaveLength(1);
-  })
-});
+  });
+
+  it('should display max moves', () => {
+    expect(wrapper.find('.max-moves').text()).toEqual('Max Moves: 10');
+  });
+})
+
