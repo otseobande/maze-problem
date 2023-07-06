@@ -80,6 +80,15 @@ describe('The ActionArea Component', () => {
 
       expect(mushroomExists).toBeTruthy();
     });
+
+    it('should set maxMoves to the sum of the Manhattan distances between Mario and each mushroom', () => {
+      const gameBoard = wrapper.state().gameBoard;
+      const marioPosition = gameBoard.findIndex(row => row.includes('mario'));
+      const mushroomPositions = gameBoard.map((row, i) => row.includes('mushroom') ? i : -1).filter(i => i !== -1);
+      const expectedMaxMoves = mushroomPositions.reduce((total, mushroomPosition) => total + Math.abs(mushroomPosition - marioPosition), 0);
+
+      expect(wrapper.state().maxMoves).toEqual(expectedMaxMoves);
+    });
   });
 
   describe('The handleDimensionChange method', () => {
@@ -370,6 +379,16 @@ describe('The ActionArea Component', () => {
       instance.updateGameBoardState(gameBoard);
 
       expect(instance.stageClearSound.play).toBeCalled();
+    }
+
+    it('should set gameStarted to false if moveCount is greater than maxMoves', () => {
+      const maxMoves = wrapper.state().maxMoves;
+      wrapper.setState({ moveCount: maxMoves + 1 });
+
+      instance.updateGameBoardState(gameBoard);
+
+      expect(wrapper.state().gameStarted).toBeFalsy();
     });
   })
-});
+}
+

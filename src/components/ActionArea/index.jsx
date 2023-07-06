@@ -6,6 +6,7 @@ import collectMushroom from '../../assets/sounds/collectMushroom.wav';
 import stageClear from '../../assets/sounds/stageClear.wav';
 
 class ActionArea extends React.Component {
+  maxMoves = null;
   state = {
     height: 10,
     width: 10,
@@ -23,34 +24,17 @@ class ActionArea extends React.Component {
     document.addEventListener("keydown", this.handleKeyDown);
   }
 
-  /**
-   * Handles dimension input change and sets value to state
-   *
-   * @param {Event} event
-   *
-   * @returns {void}
-   */
   handleDimensionChange = (event) => {
     this.setState({
       [event.target.name]: parseInt(event.target.value, 10) || 0
     });
   }
 
-  /**
-   * Runs necessary operations to start game
-   *
-   * @returns {void}
-   */
   startGame = () => {
     this.setState({ gameStarted: true });
     this.setupGameBoard();
   }
 
-  /**
-   * Updates game board with height and width
-   *
-   * @returns {void}
-   */
   setupGameBoard = () => {
     const { height, width } = this.state;
 
@@ -66,7 +50,6 @@ class ActionArea extends React.Component {
       return Math.floor(Math.random() * (floorMax - ceilMin + 1)) + ceilMin;
     }
 
-    // randomly distributing the mushrooms
     for (let i = 1; i <= height; i++) {
       const randomRowIndex = getRandomInt(0, height - 1);
       const randomColumnIndex = getRandomInt(0, width - 1);
@@ -77,19 +60,19 @@ class ActionArea extends React.Component {
     const middleHeight = Math.floor(height / 2);
     const middleWidth = Math.floor(width / 2);
 
-    // placing the mario character
-    gameBoard[middleHeight][middleWidth] = 'mario';
+    const minMoves = gameBoard.reduce((total, row, i) => {
+      return total + row.reduce((rowTotal, cell, j) => {
+        if (cell === 'mushroom') {
+          const distance = Math.abs(middleHeight - i) + Math.abs(middleWidth - j);
+          return rowTotal + distance;
+        }
+        return rowTotal;
+      }, 0);
+    }, 0);
 
-    this.setState({ gameBoard, moveCount: 0 });
+    this.setState({ gameBoard, moveCount: 0, maxMoves: minMoves });
   }
 
-  /**
-   * Updates gameBoard state
-   *
-   * @param {string} board
-   *
-   * @returns {void}
-   */
   updateGameBoardState = (board) => {
     const areAllMushroomsCollected = !this.state.gameBoard.some(row => {
       return row.some(value => value === 'mushroom');
@@ -104,15 +87,12 @@ class ActionArea extends React.Component {
       moveCount: prevState.moveCount + 1,
       areAllMushroomsCollected
     }));
+
+    if (prevState.moveCount + 1 > this.state.maxMoves) {
+      this.setState({ gameStarted: false });
+    }
   }
 
-  /**
-   * Handles moving the mario player icon vertically
-   *
-   * @param {string} direction
-   *
-   * @returns {void}
-   */
   moveMarioVertically = (direction) => {
     const board = [ ...this.state.gameBoard ];
     const marioRowIndex = board.findIndex(row => row.some(value => value === 'mario'));
@@ -136,13 +116,6 @@ class ActionArea extends React.Component {
     }
   }
 
-  /**
-   * Handles moving the mario player icon horizontally
-   *
-   * @param {string} direction
-   *
-   * @returns {void}
-   */
   moveMarioHorizontally = (direction) => {
     const board = [ ...this.state.gameBoard ];
     const marioRowIndex = board.findIndex(row => row.some(value => value === 'mario'));
@@ -165,11 +138,6 @@ class ActionArea extends React.Component {
     }
   }
 
-  /**
-   * Handles key press on page
-   *
-   * @returns {void}
-   */
   handleKeyDown = (event) => {
     const { key } = event;
 
@@ -240,3 +208,4 @@ class ActionArea extends React.Component {
 }
 
 export default ActionArea;
+
